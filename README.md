@@ -1,49 +1,78 @@
 # karpathy-llm-wiki
 
+> Hermes Agent skill · 基于 Andrej Karpathy LLM Wiki 规范的知识库维护工具
 
-
-> Hermes Agent skill · v
+---
 
 ## 功能
 
-1|---
-2|name: karpathy-llm-wiki
-3|description: 基于 Andrej Karpathy LLM Wiki 规范的知识库维护技能。支持多 vault（理想之地/AIGC-KB双库），对 wiki 做体检（lint）、消化新资料（ingest）、全文检索（query）。覆盖 Profile 系统健康检查（SOUL↔wiki对齐+frontmatter审计+memory审查）。触发词：「lint一下wiki」「查一下wiki里关于XXX」「给wiki做个全身体检」「在AIGC-KB里搜XXX」「自检」「系统健康检查」。
-4|version: "2.3"
-5|author: hermes-agent
-6|---
-7|
-8|# Karpathy LLM Wiki 维护技能（多 vault 版）
-9|
-10|基于 [Karpathy LLM Wiki 模式](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) 构建的 wiki 维护系统。
-11|
-12|## 核心理念
-13|
-14|传统 RAG：每次问题从原始文档重新检索，LLM 每次"重新发现"知识。  
-15|LLM Wiki：知识被编译一次，之后**积累复利**——交叉引用、矛盾标记、跨文档综合都提前做好。
-16|
-17|### 销售驱动视角（理想之地专属）
-18|
-19|wiki 以**促进销售**为核心目标，按四维驱动体系组织：
-20|- 政策驱动（房票/学区/人才）→ 降低购房门槛
-21|- 宣传驱动（舆情/品牌/媒体）→ 建立销售信任
-22|- 活动驱动（圈层/商业/产品）→ 吸引到访转化
-23|- 管理驱动（工程/物业/团队）→ 保障承诺兑现
-24|
+多 Vault Wiki 维护系统，提供知识库的全生命周期管理。
 
-## 安装
+### 核心能力
 
-此技能通过 Hermes Agent 管理。在 Hermes 配置中启用即可：
+| 功能 | 命令 | 说明 |
+|:-----|:------|:------|
+| **Wiki 体检** | `lint一下wiki` | 检查链接完整性、frontmatter 有效性 |
+| **资料消化** | `ingest` | 将新资料结构化注入 wiki |
+| **全文检索** | `query` | 语义搜索 + 关键词融合 |
+| **自动上下文** | `wiki_brain` | 启动时自动注入相关上下文 |
+| **系统健康** | `自检` | 全面系统健康检查 |
+
+### 支持的多 Vault
+
+| Vault | 路径 | 用途 |
+|:------|:------|:------|
+| AIGC-KB | `E:/AIGC-KB/wiki-AIGC-KB/` | 主知识库 |
+| 理想之地 | (项目专用) | 项目知识库 |
+
+### 健康检查覆盖
+
+- SOUL.md ↔ wiki 对齐
+- frontmatter 审计（标题/标签/日期完整性）
+- memory 审查（一致性检查）
+- 双向链接完整性
+
+---
+
+## 使用方法
 
 ```bash
-hermes skill enable karpathy-llm-wiki
+# 在 Hermes Agent 中：
+# "lint一下wiki"           → 检查 wiki 健康
+# "查一下wiki里关于XX"     → 全文检索
+# "给wiki做个全身体检"     → 完整健康检查
+# "在AIGC-KB里搜XXX"       → 指定 vault 搜索
 ```
+
+---
+
+## 架构
+
+```
+用户查询
+  ↓
+wiki_brain context router
+  ↓
+┌─ FTS5 关键词搜索 ─┐
+├─ 语义向量搜索 ────┤  →  RRF 融合  →  输出
+└─ 缓存加速 ────────┘
+```
+
+---
 
 ## 依赖
 
-- Python 3.10+
-- Hermes Agent
+| 依赖 | 用途 |
+|:-----|:------|
+| Python 3.14+ | 运行环境 |
+| FTS5 | 全文检索引擎 |
+| pathlib | 文件操作 |
 
-## 许可证
+---
 
-MIT
+## 相关项目
+
+- [kms-engine](https://github.com/heropanda83017/kms-engine) — 知识管理系统
+- [book-note-maker](https://github.com/heropanda83017/book-note-maker) — 读书笔记
+- [meeting-minutes](https://github.com/heropanda83017/meeting-minutes) — 公文排版
+- [investment-engine](https://github.com/heropanda83017/investment-engine) — A 股量化投资
